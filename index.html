@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake Game - Endless Challenge</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<button class="sound-toggle" id="soundToggle" title="Toggle Sound">&#x1f50a;</button>
+<canvas id="particles"></canvas>
+<div class="levelup-flash" id="levelupFlash">
+  <div class="lvl-text" id="lvlText"></div>
+</div>
+
+<div class="container">
+  <h1>SNAKE - Endless Challenge</h1>
+  <div class="hud">
+    <div><span>Score: </span><span class="val" id="score">0</span></div>
+    <div><span>Level: </span><span class="level-val" id="level">1</span></div>
+    <div><span>High Score: </span><span class="val" id="highscore">0</span></div>
+    <div><span>Speed: </span><span class="level-val" id="speed">1x</span></div>
+  </div>
+  <div class="difficulty-bar"><div class="difficulty-fill" id="diffBar"></div></div>
+  <canvas id="game" width="600" height="600"></canvas>
+  <div class="instructions">Arrow Keys / WASD to move &bull; P to pause &bull; Sound: top-right</div>
+</div>
+
+<!-- Overlay: Start Screen -->
+<div class="overlay" id="startScreen">
+  <h2>&#x1f40d; SNAKE</h2>
+  <p style="color:#aaa; text-align:center; max-width:280px;">
+    Eat food to grow. Speed increases as you level up. How far can you go?
+  </p>
+  <div class="btn-row">
+    <button id="startBtn">New Game</button>
+    <button id="continueBtn" class="btn-secondary" style="display:none;">Continue</button>
+  </div>
+</div>
+
+<!-- Overlay: Game Over -->
+<div class="overlay" id="gameOverScreen" style="display:none;">
+  <h2>Game Over</h2>
+  <div class="final-score" id="finalScore">Score: 0</div>
+  <div class="high-score" id="finalHigh">High Score: 0</div>
+  <button id="restartBtn">Play Again</button>
+</div>
+
+<!-- Overlay: Pause -->
+<div class="overlay" id="pauseScreen" style="display:none;">
+  <h2>Paused</h2>
+  <div class="btn-row">
+    <button id="resumeBtn">Resume</button>
+    <button id="saveBtn" class="btn-secondary btn-small">Save &amp; Quit</button>
+  </div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
