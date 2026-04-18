@@ -36,7 +36,18 @@
   <div class="btn-row">
     <button id="startBtn">New Game</button>
     <button id="continueBtn" class="btn-secondary" style="display:none;">Continue</button>
+    <button id="settingsBtn" class="btn-icon" title="Settings">&#x2699;</button>
   </div>
+</div>
+
+<!-- Overlay: Settings -->
+<div class="overlay settings-overlay" id="settingsScreen" style="display:none;">
+  <h2>Settings</h2>
+  <h3>Snake Skin</h3>
+  <div class="skin-picker" id="skinPicker"></div>
+  <h3>Map Theme</h3>
+  <div class="theme-picker" id="themePicker"></div>
+  <button id="settingsBackBtn">Back</button>
 </div>
 
 <!-- Overlay: Game Over -->

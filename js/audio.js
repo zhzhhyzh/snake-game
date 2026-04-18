@@ -1,8 +1,11 @@
 /**
  * Procedural audio engine using Web Audio API.
  * Handles background music, sound effects, and mute toggle.
+ * Theme-aware: BGM melody and SFX oscillator type adapt to the active map theme.
  * @module audio
  */
+
+import { getCurrentTheme } from './themes.js';
 
 const AudioCtxClass = window.AudioContext || window.webkitAudioContext;
 
@@ -14,13 +17,11 @@ let bgmInterval = null;
 let bgmStep = 0;
 let soundEnabled = true;
 
-/** Background music melody (note frequencies, 0 = rest). */
-const BGM_MELODY = [
-  262, 294, 330, 262, 330, 349, 392, 0,
-  392, 440, 392, 349, 330, 262, 294, 0,
-  330, 349, 392, 440, 392, 349, 330, 294,
-  262, 330, 294, 262, 220, 262, 294, 0,
-];
+/* Active melody config (set from theme) */
+let activeMelody = null;
+let activeTempo = 220;
+let activeMelodyType = 'triangle';
+let activeSfxType = 'square';
 
 /**
  * Returns whether sound is currently enabled.
@@ -40,8 +41,26 @@ export function toggleSound() {
 }
 
 /**
+ * Switch the active melody, tempo, and oscillator types to match a theme.
+ * If BGM is currently playing it will be restarted with the new melody.
+ */
+export function setActiveMelody() {
+  const theme = getCurrentTheme();
+  activeMelody = theme.melody;
+  activeTempo = theme.melodyTempo;
+  activeMelodyType = theme.melodyType;
+  activeSfxType = theme.sfxType;
+
+  /* Restart BGM if it was already playing */
+  if (bgmInterval) {
+    stopBGM();
+    startBGM();
+  }
+}
+
+/**
  * Initialises the Web Audio context and gain nodes.
- * Safe to call multiple times — only runs once.
+ * Safe to call multiple times -- only runs once.
  */
 export function initAudio() {
   if (audioCtx) return;
@@ -82,26 +101,26 @@ function playNote(freq, dur, vol, type = 'square', dest = sfxGain) {
   osc.stop(audioCtx.currentTime + dur);
 }
 
-/* ---- Sound Effects ---- */
+/* ---- Sound Effects (use theme sfxType) ---- */
 
 /** Play the "eat food" sound. */
 export function sfxEat() {
-  playNote(600, 0.1, 0.3, 'square');
-  setTimeout(() => playNote(800, 0.12, 0.25, 'square'), 50);
+  playNote(600, 0.1, 0.3, activeSfxType);
+  setTimeout(() => playNote(800, 0.12, 0.25, activeSfxType), 50);
 }
 
 /** Play the "bonus food" sound. */
 export function sfxBonus() {
-  playNote(500, 0.08, 0.3, 'square');
-  setTimeout(() => playNote(700, 0.08, 0.3, 'square'), 60);
-  setTimeout(() => playNote(900, 0.15, 0.3, 'square'), 120);
+  playNote(500, 0.08, 0.3, activeSfxType);
+  setTimeout(() => playNote(700, 0.08, 0.3, activeSfxType), 60);
+  setTimeout(() => playNote(900, 0.15, 0.3, activeSfxType), 120);
 }
 
 /** Play the "level up" fanfare. */
 export function sfxLevelUp() {
   const notes = [523, 659, 784, 1047];
   notes.forEach((n, i) =>
-    setTimeout(() => playNote(n, 0.2, 0.35, 'square'), i * 100),
+    setTimeout(() => playNote(n, 0.2, 0.35, activeSfxType), i * 100),
   );
   setTimeout(() => playNote(1047, 0.5, 0.3, 'sine'), 400);
 }
@@ -115,21 +134,27 @@ export function sfxGameOver() {
 
 /* ---- Background Music ---- */
 
-/** Start the procedural chiptune BGM loop. */
+/** Start the procedural BGM loop using the active theme melody. */
 export function startBGM() {
   if (bgmInterval) return;
+
+  /* Ensure melody is loaded from theme */
+  if (!activeMelody) {
+    setActiveMelody();
+  }
+
   bgmStep = 0;
   bgmInterval = setInterval(() => {
     if (!soundEnabled || !audioCtx) return;
-    const note = BGM_MELODY[bgmStep % BGM_MELODY.length];
+    const note = activeMelody[bgmStep % activeMelody.length];
     if (note > 0) {
-      playNote(note, 0.18, 0.15, 'triangle', musicGain);
+      playNote(note, 0.18, 0.15, activeMelodyType, musicGain);
       if (bgmStep % 4 === 0) {
         playNote(note / 2, 0.35, 0.08, 'sine', musicGain);
       }
     }
     bgmStep++;
-  }, 220);
+  }, activeTempo);
 }
 
 /** Stop the BGM loop. */

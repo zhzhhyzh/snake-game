@@ -237,3 +237,84 @@ canvas#game {
   pointer-events: none;
   z-index: 14;
 }
+
+/* --- Settings Overlay --- */
+.settings-overlay {
+  max-height: 90vh;
+  overflow-y: auto;
+  gap: 10px;
+  min-width: 340px;
+}
+
+.settings-overlay h3 {
+  font-size: 14px;
+  color: #aaa;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 6px;
+}
+
+.skin-picker,
+.theme-picker {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.picker-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.picker-option:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.picker-option.active {
+  border-color: #00ff88;
+  background: rgba(0, 255, 136, 0.1);
+}
+
+.picker-option .preview-strip {
+  width: 60px;
+  height: 14px;
+  border-radius: 4px;
+  overflow: hidden;
+  display: flex;
+}
+
+.picker-option .preview-strip span {
+  flex: 1;
+  display: block;
+}
+
+.picker-option .preview-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+}
+
+.picker-option .label {
+  font-size: 11px;
+  color: #ccc;
+  white-space: nowrap;
+}
+
+.btn-icon {
+  padding: 8px 14px !important;
+  font-size: 20px !important;
+  line-height: 1;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ccc !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}

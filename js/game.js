@@ -7,7 +7,7 @@ import {
   COLS, ROWS, BASE_INTERVAL, MIN_INTERVAL,
   FOOD_PER_LEVEL, OBSTACLE_INTERVAL, MAX_OBSTACLES, SPRINT_MULTIPLIER,
 } from './constants.js';
-import { initAudio, sfxEat, sfxBonus, sfxLevelUp, sfxGameOver, startBGM, stopBGM } from './audio.js';
+import { initAudio, sfxEat, sfxBonus, sfxLevelUp, sfxGameOver, startBGM, stopBGM, setActiveMelody } from './audio.js';
 import { showLevelUpAnimation } from './effects.js';
 import { deleteSave, setHighScore, getHighScore } from './storage.js';
 import { draw } from './renderer.js';
@@ -261,6 +261,7 @@ function gameOver() {
 /** Start a brand-new game. */
 export function initGame() {
   initAudio();
+  setActiveMelody();
   snake = [{ x: Math.floor(COLS / 2), y: Math.floor(ROWS / 2) }];
   direction = 'right';
   nextDirection = 'right';
@@ -288,6 +289,7 @@ export function initGame() {
  */
 export function resumeFromSave(state) {
   initAudio();
+  setActiveMelody();
   snake = state.snake;
   direction = state.direction;
   nextDirection = state.nextDirection;

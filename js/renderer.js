@@ -1,12 +1,23 @@
 /**
  * Canvas rendering helpers for the snake game.
+ * Uses active skin and theme from themes module.
  * @module renderer
  */
 
 import { CELL, COLS, ROWS } from './constants.js';
+import { getCurrentSkin, getCurrentTheme } from './themes.js';
 
 const canvas = document.getElementById('game');
 const ctx = canvas.getContext('2d');
+
+/**
+ * Apply the current theme's visual style to the game canvas element.
+ */
+export function applyThemeToCanvas() {
+  const theme = getCurrentTheme();
+  canvas.style.background = theme.canvasBg;
+  canvas.style.borderColor = theme.canvasBorder;
+}
 
 /**
  * Draw a cell-aligned rounded rectangle.
@@ -51,9 +62,10 @@ function lerpWrap(a, b, t, max) {
   return (a + diff * t) * CELL;
 }
 
-/** Draw the subtle background grid lines. */
+/** Draw the subtle background grid lines using theme colour. */
 function drawGrid() {
-  ctx.strokeStyle = 'rgba(255,255,255,0.02)';
+  const theme = getCurrentTheme();
+  ctx.strokeStyle = theme.gridColor;
   for (let x = 0; x <= COLS; x++) {
     ctx.beginPath();
     ctx.moveTo(x * CELL, 0);
@@ -70,41 +82,36 @@ function drawGrid() {
 
 /**
  * Render a full frame of the game.
- * @param {number}   t         - Tick interpolation progress (0-1).
- * @param {Object}   state     - Current game state.
- * @param {Object[]} state.snake
- * @param {Object[]|null} state.prevSnake
- * @param {string}   state.direction
- * @param {Object}   state.food
- * @param {Object[]} state.obstacles
+ * @param {number} t     - Tick interpolation progress (0-1).
+ * @param {Object} state - Current game state.
  */
 export function draw(t, state) {
   const { snake, prevSnake, direction, food, obstacles, sprinting } = state;
+  const skin = getCurrentSkin();
+  const theme = getCurrentTheme();
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawGrid();
 
   /* Obstacles */
-  obstacles.forEach((o) => drawCell(o.x, o.y, '#ff2244', 2));
+  obstacles.forEach((o) => drawCell(o.x, o.y, theme.obstacleColor, 2));
 
   /* Snake body (smoothly interpolated) */
   const prev = prevSnake || snake;
   const easeT = t * t * (3 - 2 * t); // smoothstep
 
   snake.forEach((seg, i) => {
-    const frac = i / snake.length;
-    const g = Math.round(255 - frac * 120);
-    const b = Math.round(136 - frac * 80);
+    const color = skin.colorFn(i, snake.length);
     const p = prev[i] || seg;
     const px = lerpWrap(p.x, seg.x, easeT, COLS);
     const py = lerpWrap(p.y, seg.y, easeT, ROWS);
 
     /* Sprint glow on head */
     if (i === 0 && sprinting) {
-      ctx.shadowColor = '#00ffcc';
+      ctx.shadowColor = skin.sprintGlow;
       ctx.shadowBlur = 16;
     }
-    drawCellSmooth(px, py, `rgb(0,${g},${b})`, i === 0 ? 6 : 4);
+    drawCellSmooth(px, py, color, i === 0 ? 6 : 4);
     if (i === 0 && sprinting) {
       ctx.shadowBlur = 0;
     }
@@ -115,7 +122,7 @@ export function draw(t, state) {
   const hp = prev[0] || h;
   const hx = lerpWrap(hp.x, h.x, easeT, COLS) + CELL / 2;
   const hy = lerpWrap(hp.y, h.y, easeT, ROWS) + CELL / 2;
-  ctx.fillStyle = '#0a0a2e';
+  ctx.fillStyle = skin.eyeColor;
 
   if (direction === 'right' || direction === 'left') {
     const dx = direction === 'right' ? 3 : -3;
@@ -129,8 +136,9 @@ export function draw(t, state) {
 
   /* Food with pulsing glow */
   const pulse = 8 + Math.sin(performance.now() * 0.005) * 4;
-  ctx.shadowColor = food.type === 'bonus' ? '#ffaa00' : '#00ffaa';
+  const isBonus = food.type === 'bonus';
+  ctx.shadowColor = isBonus ? theme.bonusGlow : theme.foodGlow;
   ctx.shadowBlur = pulse;
-  drawCell(food.x, food.y, food.type === 'bonus' ? '#ffaa00' : '#00ff88', 8);
+  drawCell(food.x, food.y, isBonus ? theme.bonusColor : theme.foodColor, 8);
   ctx.shadowBlur = 0;
 }
