@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Snake Game - Endless Challenge</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -68,5 +68,14 @@
 </div>
 
 <script type="module" src="js/main.js"></script>
+
+<!-- On-screen D-Pad for mobile -->
+<div class="dpad" id="dpad">
+  <button class="d-up" data-dir="up">&#x25B2;</button>
+  <button class="d-left" data-dir="left">&#x25C0;</button>
+  <button class="d-sprint" id="sprintBtn">SPR</button>
+  <button class="d-right" data-dir="right">&#x25B6;</button>
+  <button class="d-down" data-dir="down">&#x25BC;</button>
+</div>
 </body>
 </html>

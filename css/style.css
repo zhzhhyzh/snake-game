@@ -19,6 +19,8 @@ body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   color: #fff;
   overflow: hidden;
+  max-width: 100vw;
+  overscroll-behavior: none;
 }
 
 /* --- Layout --- */
@@ -29,6 +31,9 @@ body {
   gap: 12px;
   position: relative;
   z-index: 2;
+  max-width: 100%;
+  padding: 0 8px;
+  box-sizing: border-box;
 }
 
 h1 {
@@ -66,6 +71,8 @@ canvas#game {
   border-radius: 8px;
   background: #0d0d35;
   box-shadow: 0 0 30px rgba(0, 204, 255, 0.15);
+  max-width: 100%;
+  height: auto;
 }
 
 /* --- Difficulty Bar --- */
@@ -317,4 +324,183 @@ canvas#game {
   background: rgba(255, 255, 255, 0.08) !important;
   color: #ccc !important;
   border: 1px solid rgba(255, 255, 255, 0.15) !important;
+}
+
+/* --- Touch D-Pad Controls --- */
+.dpad {
+  display: none;
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 18;
+  width: 180px;
+  height: 180px;
+}
+
+.dpad button {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.1s;
+}
+
+.dpad button:active {
+  background: rgba(0, 255, 136, 0.35);
+}
+
+.dpad .d-up    { top: 0;   left: 62px; }
+.dpad .d-down  { top: 124px; left: 62px; }
+.dpad .d-left  { top: 62px; left: 0; }
+.dpad .d-right { top: 62px; left: 124px; }
+
+.dpad .d-sprint {
+  top: 62px;
+  left: 62px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(0, 255, 204, 0.15);
+  border: 1px solid rgba(0, 255, 204, 0.3);
+}
+
+.dpad .d-sprint:active {
+  background: rgba(0, 255, 204, 0.4);
+}
+
+/* --- Mobile breakpoint --- */
+@media (max-width: 680px) {
+  body {
+    overflow: auto;
+    align-items: flex-start;
+    padding: 8px 0 0;
+  }
+
+  h1 {
+    font-size: 20px;
+  }
+
+  .hud {
+    font-size: 12px;
+    gap: 12px;
+  }
+
+  .container {
+    gap: 6px;
+    width: 100%;
+    padding: 0 8px;
+  }
+
+  canvas#game {
+    width: 100% !important;
+    height: auto !important;
+    border-radius: 4px;
+  }
+
+  .instructions {
+    display: none;
+  }
+
+  /* Show D-Pad on small screens */
+  .dpad {
+    display: block;
+  }
+
+  /* Overlays */
+  .overlay {
+    width: 90vw;
+    max-width: 360px;
+    padding: 24px 20px;
+  }
+
+  .overlay h2 {
+    font-size: 24px;
+  }
+
+  .overlay button {
+    padding: 10px 24px;
+    font-size: 14px;
+  }
+
+  .settings-overlay {
+    min-width: unset;
+    width: 92vw;
+    max-width: 380px;
+    max-height: 80vh;
+  }
+
+  .picker-option .preview-strip {
+    width: 48px;
+    height: 12px;
+  }
+
+  .picker-option .preview-circle {
+    width: 28px;
+    height: 28px;
+  }
+
+  .picker-option .label {
+    font-size: 10px;
+  }
+
+  .sound-toggle {
+    top: 8px;
+    right: 8px;
+    width: 34px;
+    height: 34px;
+    font-size: 18px;
+  }
+}
+
+/* Also show D-Pad on touch-capable devices (tablets, phones) */
+@media (pointer: coarse) {
+  .dpad {
+    display: block;
+  }
+
+  .instructions {
+    display: none;
+  }
+}
+
+/* Extra small phones */
+@media (max-width: 400px) {
+  .dpad {
+    width: 150px;
+    height: 150px;
+    bottom: 16px;
+  }
+
+  .dpad button {
+    width: 46px;
+    height: 46px;
+    font-size: 20px;
+    border-radius: 10px;
+  }
+
+  .dpad .d-up    { top: 0;   left: 52px; }
+  .dpad .d-down  { top: 104px; left: 52px; }
+  .dpad .d-left  { top: 52px; left: 0; }
+  .dpad .d-right { top: 52px; left: 104px; }
+
+  .dpad .d-sprint {
+    top: 52px;
+    left: 52px;
+    width: 46px;
+    height: 46px;
+    font-size: 10px;
+  }
 }
