@@ -61,9 +61,16 @@ export function setActiveMelody() {
 /**
  * Initialises the Web Audio context and gain nodes.
  * Safe to call multiple times -- only runs once.
+ * Resumes the context if Safari/WebKit has suspended it.
  */
 export function initAudio() {
-  if (audioCtx) return;
+  if (audioCtx) {
+    /* Safari suspends the context — resume on each user-initiated call */
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+    return;
+  }
   audioCtx = new AudioCtxClass();
 
   masterGain = audioCtx.createGain();
@@ -77,6 +84,11 @@ export function initAudio() {
   sfxGain = audioCtx.createGain();
   sfxGain.gain.value = 0.5;
   sfxGain.connect(masterGain);
+
+  /* Resume immediately in case the browser suspended it on creation */
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
 }
 
 /**
@@ -89,6 +101,7 @@ export function initAudio() {
  */
 function playNote(freq, dur, vol, type = 'square', dest = sfxGain) {
   if (!audioCtx || !soundEnabled) return;
+  if (audioCtx.state === 'suspended') audioCtx.resume();
   const osc = audioCtx.createOscillator();
   const g = audioCtx.createGain();
   osc.type = type;

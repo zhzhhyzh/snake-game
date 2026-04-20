@@ -7,7 +7,7 @@ import {
   initGame, resumeFromSave, resume, stopGame,
   isRunning, isPaused, getStateSnapshot,
 } from './game.js';
-import { toggleSound, startBGM, stopBGM, setActiveMelody } from './audio.js';
+import { toggleSound, startBGM, stopBGM, setActiveMelody, initAudio } from './audio.js';
 import { saveGame, loadGame, hasSave } from './storage.js';
 import {
   SNAKE_SKINS, MAP_THEMES,
@@ -119,6 +119,7 @@ export function bindUI() {
   /* Sound toggle */
   const soundToggleBtn = document.getElementById('soundToggle');
   soundToggleBtn.addEventListener('click', () => {
+    initAudio(); /* Ensure AudioContext is created & resumed on user gesture (Safari fix) */
     const enabled = toggleSound();
     soundToggleBtn.textContent = enabled ? '\u{1F50A}' : '\u{1F507}';
     soundToggleBtn.classList.toggle('muted', !enabled);
